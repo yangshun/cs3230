@@ -37,21 +37,139 @@ male-optimal/female-optimal, which suggests there is only one stable matching po
 
 (b)
 
-| boys | 1st | 2nd |      | girls | 1st | 2nd |
-|-------------------      |--------------------
-|  a   |  A  |  B  |      |   A   |  a  |  b  |
-|  b   |  A  |  B  |      |   B   |  a  |  b  |
+| boys | 1st | 2nd |
+|------|-----|-----|
+|  a   |  A  |  B  |
+|  b   |  A  |  B  |
+
+| girls | 1st | 2nd |
+|-------|-----|-----|
+|   A   |  a  |  b  |
+|   B   |  a  |  b  |
 
 (c)
 
-| boys | 1st | 2nd | 3rd |      | girls | 1st | 2nd | 3rd |
-|-------------------------      |--------------------------
-|  a   |  A  |  B  |  C  |      |   A   |  c  |  b  |  a  |
-|  b   |  A  |  B  |  C  |      |   B   |  c  |  b  |  a  |
-|  b   |  A  |  B  |  C  |      |   C   |  c  |  b  |  a  |
 
+| boys | 1st | 2nd | 3rd |
+|------|-----|-----|-----|
+|  a   |  A  |  B  |  C  |
+|  b   |  B  |  A  |  C  |
+|  b   |  A  |  B  |  C  |
 
+| girls | 1st | 2nd | 3rd |
+|-------|-----|-----|-----|
+|   A   |  b  |  c  |  a  |
+|   B   |  c  |  a  |  b  |
+|   C   |  a  |  b  |  c  |
 
+The algorithm terminates when the last girl gets her first proposal.
+For the other n-1 girls, they can start with their last choice they are proposed to,
+and keep getting proposed to and improve by one choice each time that happens.
+For each of these proposals, a previously taken boy will become free and he can propose again.
+These n-1 girls will each receive n proposals.
 
+Hence there are (n-1) * n + 1 = n^2 - n + 1 proposals in total.
 
+### S3
 
+(ai)
+
+```
+    0 - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - 10 - 11 - 12 - 13 - 14 - 15 - 16 - 17 - 18 - 19 - 20
+----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----+----+----+----+----+-
+R0  <---- A1 --->   <------ A10 ------->         <
+R1      <---- A7 --->       <------ A6 ----->     
+R2          <---- A4 --->           <------- A5 --
+```
+
+Room assignment: 
+- R0: A1, A10, A2
+- R1: A7, A6
+- R2: A4, A5
+
+(aii)
+
+```
+    0 - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - 10 - 11 - 12 - 13 - 14 - 15 - 16 - 17 - 18 - 19 - 20
+----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----+----+----+----+----+-
+R0  <---- A1 --->   <------ A10 ------->         <------------------ A2 ----------------->
+R1      <---- A7 --->       <------ A6 ----->         <------- A8 --------> 
+R2          <---- A4 --->           <------- A5 ------>         <------------ A3 ------------->
+R3                                                                   <------- A9 -------->
+```
+
+Room assignment: 
+- R0: A1, A10, A2
+- R1: A7, A6, A8
+- R2: A4, A5, A3
+- R3: A9
+
+4 rooms are required.
+Yes it is optimal, because from time 15-16, there are 4 concurrent events (A2, A8, A3 and A9), 
+hence a minimum of 4 rooms will have to be used.
+
+(b)
+
+Explanation of data structures
+
+- The event points are implemented as a list, and stores tuples in the following format: `(time, event_id, type: start/end')`.
+- `rooms` is a dictionary that maps a `rooms_id` to a list of `event_ids` assigned to that room. This is to enable O(1) retrieval of the list of `event_ids` assigned to the room given a `room_id`.
+- `free_rooms` is a list of `room_ids` of the rooms that are currently free.
+- `event_locations` is a dictionary that maps an `event_id` to the `room_id` of the room assigned to that event. This is to enable O(1) retrieval of a given `event_id`.
+
+```py
+def lsa(events):
+  event_points = []
+  rooms = {}
+  free_rooms = []
+  events_location = {}
+  room_count = 0
+
+  # Create a list of event points from the input. Time complexity: O(n)
+  for event in events:
+    event_points.append((event[1], event[0], 'start'))
+    event_points.append((event[2], event[0], 'end'))
+  
+  # Sort the event points according to time. Time complexity: O(n lg n)
+  event_points.sort(key=lambda x:x[0])
+
+  # Scanning of the event points. Time complexity: O(n)
+  for point in event_points:
+    event_id = point[1]
+    if point[2] == 'start':
+      if len(free_rooms) == 0:
+        # Create new room
+        new_room_id = 'R' + str(room_count)
+        rooms[new_room_id] = []
+        free_rooms.append(new_room_id)
+        room_count += 1
+      current_room_id = free_rooms.pop(0)
+      events_location[event_id] = current_room_id
+      rooms[current_room_id].append(event_id)
+    elif point[2] == 'end':
+      room_id = events_location[event_id]
+      free_rooms.append(room_id)
+
+  # Print room assignment results
+  for room_id, rooms_list in rooms.iteritems():
+    print room_id, ':', rooms_list
+
+lsa([ ('A1', 0, 3), 
+      ('A2', 11, 18.9), 
+      ('A3', 14, 20), 
+      ('A4', 2, 5.9), 
+      ('A5', 8, 11.9), 
+      ('A6', 6, 10), 
+      ('A7', 1, 3.9), 
+      ('A8', 12, 16), 
+      ('A9', 15, 19), 
+      ('A10', 4, 9)])
+
+Results:
+# R0 :  ['A1', 'A10', 'A2']
+# R1 :  ['A7', 'A6', 'A8']
+# R2 :  ['A4', 'A5', 'A3']
+# R3 :  ['A9']
+```
+
+The bottleneck of the algorithm is in the sorting step, which makes the running time `O(n lg n)`.
