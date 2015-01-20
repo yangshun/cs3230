@@ -1,3 +1,9 @@
+CS3230 Homework Set #1
+==
+
+Name: Tay Yang Shun  
+Matric No: A0073063M
+
 ### S1 
 
 (a)
@@ -25,9 +31,9 @@ The number reported in Step 5 is *n*.
 
 (a)
 
-For the first run where the boys {a, b, c, d} propose, the pairing are as follows: *(a, B), (b, C), (c, A), (d, D)*.
+For the first run where the boys *{a, b, c, d}* propose, the pairing are as follows: *(a, B), (b, C), (c, A), (d, D)*.
 
-For the second run where the girls {A, B, C, D} propose, the pairing are as follows: *(A, c), (B, a), (C, b), (D, d)*.
+For the second run where the girls *{A, B, C, D}* propose, the pairing are as follows: *(A, c), (B, a), (C, b), (D, d)*.
 
 When boys propose, the result is male-optimal and female-pessimal. 
 When the girls propose, the result is female-optimal and male-pessimal.
