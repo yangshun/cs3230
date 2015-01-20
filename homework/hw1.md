@@ -43,12 +43,12 @@ male-optimal/female-optimal, which suggests there is only one stable matching po
 
 (b)
 
-| boys | 1st | 2nd |
+| boys | 1<sup>st<sup> | 2<sup>nd<sup> |
 |------|-----|-----|
 |  a   |  A  |  B  |
 |  b   |  A  |  B  |
 
-| girls | 1st | 2nd |
+| girls | 1<sup>st<sup> | 2<sup>nd<sup> |
 |-------|-----|-----|
 |   A   |  a  |  b  |
 |   B   |  a  |  b  |
@@ -56,13 +56,13 @@ male-optimal/female-optimal, which suggests there is only one stable matching po
 (c)
 
 
-| boys | 1st | 2nd | 3rd |
+| boys | 1<sup>st<sup> | 2<sup>nd<sup> | 3<sup>rd<sup> |
 |------|-----|-----|-----|
 |  a   |  A  |  B  |  C  |
 |  b   |  B  |  A  |  C  |
 |  b   |  A  |  B  |  C  |
 
-| girls | 1st | 2nd | 3rd |
+| girls | 1<sup>st<sup> | 2<sup>nd<sup> | 3<sup>rd<sup> |
 |-------|-----|-----|-----|
 |   A   |  b  |  c  |  a  |
 |   B   |  c  |  a  |  b  |
