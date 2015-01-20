@@ -120,7 +120,7 @@ Explanation of data structures
 - The event points are implemented as a list, and stores tuples in the following format: `(time, event_id, type: 'start/end')`.
 - `rooms` is a dictionary that maps a `rooms_id` to a list of `event_ids` assigned to that room. This is to enable O(*1*) retrieval of the list of `event_ids` assigned to the room given a `room_id`.
 - `free_rooms` is a list of `room_ids` of the rooms that are currently free.
-- `event_locations` is a dictionary that maps an `event_id` to the `room_id` of the room assigned to that event. This is to enable O(*1*) retrieval of a given `event_id`.
+- `event_locations` is a dictionary that maps an `event_id` to the `room_id` of the room assigned to that event. This is to enable O(*1*) retrieval of a `room_id` given an `event_id`.
 
 ```py
 def lsa(events):
