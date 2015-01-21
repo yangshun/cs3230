@@ -140,6 +140,7 @@ def lsa(events):
 
   # Scanning of the event points. Time complexity: O(n)
   for point in event_points:
+    # The following operations in the for loop run in O(1) time
     event_id = point[1]
     if point[2] == 'start':
       if len(free_rooms) == 0:
