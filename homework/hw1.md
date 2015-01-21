@@ -23,7 +23,7 @@ The number reported in Step 5 is *n*.
 
 *n - 1* additions will be done in all.
 
-(ii) *n - 1* phases.
+(ii) lg(*n - 1*) phases.
 
 (iii) *n - 1* phases.
 
