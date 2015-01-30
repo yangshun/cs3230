@@ -1,0 +1,221 @@
+<html>
+<!-- CS3230 - Programming Assignment 1 - Part 1 - Jan-2015 -->
+<head>
+<title>CS3230-PA1-Part 1</title>
+</head>
+
+
+<body>
+
+<font color="blue" >
+Programming Assignment 1 - Part 1
+<br>
+CS3230 - Design and Analysis of Algorithms
+<br>
+Spring - 2015
+</font>
+<hr>
+
+
+<h1 align=center> Spaceship Momentum </h1>
+<p>
+Anka is working at MarsTravel company. She is building a spaceship's module for landing on Mars. For safely landing, the momentum of the spaceship must be rapidly determined every millisecond, with highest precision. Anka knows that, to calculate the spaceship's momentum, she just needs to multiply its velocity to relativistic mass. To avoid any precision loss, these values must be stored in some &quot;radix point&quot; format, with length up to thousands of digits. However, the current spaceship's computer doesn't support that. Therefore, Anka has to re-program the multiplication operation. Help her to implement this in C++ or Java.
+</p>
+
+<h2>Your task</h2>
+<p>
+You are given the spacecraft's velocity V and relativistic mass M. Compute its momentum P. These values are non-negative real numbers, written in radix point format in some base-B positional numerical system. 
+</p>
+
+
+<h2>Technical information</h2>
+<p>
+A real number in radix point format has at most two parts: an integer part (compulsory) and a fractional part (optional), separated by a radix point (i.e. a small dot &quot;.&quot;), if the fractional part is present. It is similar to the fixed point format, except that there's no limit on the length of each part. 
+</p>
+
+Note that, numbers can be written in some base-B numerical system. We consider any radix base B from 2 to 36:<b> B = 2 .. 36.</b> Only following digits are allowed:<br>
+
+<pre>"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"</pre>
+
+Value of digits:
+<pre>'0' = 0; '1' = 1; ... '9' = 9; 'A' = 10; 'B' = 11; ..., 'Z' = 35;</pre>
+
+<p>
+<i><b>Examples</b> of some numbers in different bases:</i>
+<pre>
+In base B=2: 	1010101.01010101; 10010101.01
+In base B=10:	9813.1239555; 2015
+In base B=16: 	FAFA.00EF
+In base B=36: 	CS3230.FUN; JANUARY.2015
+</pre>
+<br>
+Numbers must be written without (unnecessary) leading and trailing zero. All numbers in previous examples are correctly written. Following are examples of <b>incorrectly</b> written numbers:
+<br>
+<pre>
+<b>Wrong:			Correct:</b>
+0089.23		(must delete leading zeros: 	89.23)
+1F2.00F510	(must delete trailing zeros: 	1F2.00F51)
+69.		(must delete radix point:	69)
+.XYZ		(must insert integer part:	0.XYZ)
+</pre>
+
+
+
+
+<h2>Hints from the Boss</h2>
+The Boss gives Anka some hints. First, the long multiplication can be implemented in the same way as how she learned in primary school. Following is an example from Wikipedia.
+<pre>
+	23958233
+            5830 x
+    ------------
+        00000000 ( =      23,958,233 x     0)
+       71874699  ( =      23,958,233 x    30)
+     191665864   ( =      23,958,233 x   800)
+    119791165    ( =      23,958,233 x 5,000)
+    ------------
+    139676498390 ( = 139,676,498,390        )
+</pre>
+
+Second, such multiplication algorithm works for any radix base. Thus, Anka doesn't need to convert numbers into different bases.
+<br><br>
+Anka is good enough, so she knows all these stuffs already. She also knows how to store a long number using an array, in reverse order of digits, with the length stored in the first index. This trick her Boss doesn't know. So, she will never ask for more hints.
+<br>
+
+
+
+
+<h2>Input: </h2>
+
+First line of the input is the number T of test cases. Next 3*T lines of input describe T test cases. Each test case starts with a number B, the radix base, in the first line. Then follow the velocity V and the mass M, each value per line.
+<br><br>
+The numbers T and B are in decimal form, while V and M are in base-B form. You can assume that these numbers are given in correct format (no unnecessary zeros and no unnecessary radix point).
+<br>
+<h2>Output: </h2>
+You must output T lines, each line writes the momentum value P for each test case in order given in the input. P must be written in the correct format and in same radix base B indicated in each test case.
+<br>
+
+
+<h2>Constraints:</h2>
+Length of V and M is at least 1 and at most 5005 digits.
+<br>
+T is at least 1 and at most 20. 
+<br>
+Total length of all numbers in all T testcases is less than 10010 digits.
+<br><br>
+Memory: 256M
+<br>
+Running time: 1 second per T testcases.
+<br><br>
+<big>
+<i>
+You are required to implement your multiplication algorithm from crash. 
+<b> <font color=red>
+You are not allowed to use the built-in BigInteger or similar class. 
+</font></b>
+Your program will be manually checked.
+</i>
+<br><br>
+<b>Always check for the most updated requirements announced in IVLE.</b>
+</big>
+<br><br><br>
+
+
+
+
+<h2>Task A (30 points)</h2>
+Numbers in the input are non-negative <b>integers</b>, without fractional part (no radix point), given in decimal form, that is <b>B=10</b>. 
+<br><br>
+<b><i>Sample input for task A:</i></b>
+<pre>
+4
+10
+1234
+98
+10
+7
+987754
+10
+9484857578438355666555
+23445879438579345305843092
+10
+0
+12393948545757
+</pre>
+<b><i>Sample output:</i></b>
+<pre>
+120932
+6914278
+222380827276161322987671196928949534929902188060
+0
+</pre>
+
+
+
+<h2>Task B (30 points)</h2>
+Numbers in the input are non-negative <b>real numbers</b> (fractional part may be present), given in decimal form <b>(B=10)</b>.
+<br><br>
+<b><i>Sample input for task B:</i></b>
+<pre>
+5
+10
+0.002
+5
+10
+12.125
+16
+10
+10000
+10000000000000000.0000000000001
+10
+1234567890.12345678901
+9876543210987654.32109
+10
+12345678901234567890.1
+0.987654321098765432109
+</pre>
+
+<b><i>Sample output:</i></b>
+<pre>
+0.01
+194
+100000000000000000000.000000001
+12193263113702179522584514.5533336229232209
+12193263113702179522.5845145533336229232209
+</pre>
+
+
+
+
+
+
+<h2>Task C (40 points)</h2>
+The numbers V and M are non-negative <b>real numbers</b> given in <b> base-B </b> numerical system, where B can be <b>any</b> from 2 to 36 inclusively.
+<br><br>
+<b><i>Sample input for task C:</i></b>
+<pre>
+4
+2
+101.0101
+10001001
+10
+123.45
+0.010101018
+16
+F9F7.AF8
+EF0.ABCD2
+36
+CS3230.ISFUN
+GOOD.LUCK
+</pre>
+<b><i>Sample output:</i></b>
+<pre>
+1011010111.1101
+1.2469706721
+E968B8E.44D0FF7
+5X8QINW3TU.51KWB16OS
+</pre>
+(End of problem's description)
+</body>
+
+<!-- ninhnnsoc@gmail.com -->
+</html>
