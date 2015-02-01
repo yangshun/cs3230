@@ -33,10 +33,10 @@ char digitOf(int val) { // val must be < base <= 36
     return digits[val];
 };
 
-// Trim leading and trailing zeros, and radixpoint
+//Trim leading and trailing zeros, and radixpoint
 string trim(string aStr) {
     string X = aStr;
-    // leading zeros: 000.001
+    //leading zeros: 000.001
     while (X.length() > 1 and X[0] == '0' and X[1] != RADIX_POINT) {
         X.erase(0,1);
     }
@@ -64,14 +64,13 @@ string trim(string aStr) {
     return X;
 };
 
+
 void convertStrToArr(string str, char* arr) {
     strcpy(arr, str.c_str());
 };
 
-void resetArr(char* arr) {
-    for (int i = 0; i < strlen(arr); i++) {
-        arr[i] = '0';
-    }
+void resetArray(char* arr) {
+    memset(arr, '\0', sizeof(char) * MAX_LEN);
 }
 
 string convertArrToStr(char arr[]) {
@@ -84,7 +83,8 @@ void reverseStr(string &str) {
 };
 
 void printArray(char arr[]) {
-    for (int i = 0; i < strlen(arr); i++) {
+    int len = strlen(arr);
+    for (int i = 0; i < len; i++) {
         cout << arr[i];
     }
     cout << endl;
@@ -101,38 +101,42 @@ void intToString(int number, int base, char arr[]) {
     arr[1] = digitOf(number / base);
 };
 
+// void copyArrays(char srcArray[], char dstArray[]) {
+//     for (int i = 0; i < MAX_LEN; i++) {
+//         dstArray[i] = srcArray[i];
+//     }
+// }
 
-void copyArrays(char srcArray[], char dstArray[]) {
-    for (int i = 0; i < MAX_LEN; i++) {
-        dstArray[i] = srcArray[i];
-    }
-}
-
-void addArrays(char aArray[], char bArray[], int base, char rArray[]) {
-    resetArr(rArray);
-    int lenA = strlen(aArray);
-    int lenB = strlen(bArray);
-    int longerLength = lenA > lenB ? lenA : lenB;
-    char carryOver = '0';
-    for (int i = 0; i < longerLength; i++) {
-        int aDigit = valueOf(aArray[i]);
-        int bDigit = valueOf(bArray[i]);
-        char productAsString[2];
-        intToString(aDigit + bDigit + valueOf(carryOver), base, productAsString);
-        rArray[i] = productAsString[0];
-        carryOver = productAsString[1];
-    }
-    rArray[longerLength] = carryOver;
-}
+// void addArrays(char aArray[], char bArray[], int base, char rArray[]) {
+//     resetArray(rArray);
+//     int lenA = strlen(aArray);
+//     int lenB = strlen(bArray);
+//     cout << lenA << endl;
+//     cout << lenB << endl;
+//     int longerLength = lenA > lenB ? lenA : lenB;
+//     char carryOver = '0';
+//     for (int i = 0; i < longerLength; i++) {
+//         int aDigit = valueOf(aArray[i]);
+//         int bDigit = valueOf(bArray[i]);
+//         char productAsString[2];
+//         intToString(aDigit + bDigit + valueOf(carryOver), base, productAsString);
+//         rArray[i] = productAsString[0];
+//         carryOver = productAsString[1];
+//     }
+//     rArray[longerLength] = carryOver;
+// }
 
 void multiplyArrays(char aArray[], char bArray[], int base, char rArray[]) {
-    resetArr(rArray);
-    for (int i = 0; i < strlen(aArray); i++) {
+    resetArray(rArray);
+    char iArray[MAX_LEN];
+    char *tempArray = new char[MAX_LEN];
+    int lenA = strlen(aArray);
+    int lenB = strlen(bArray);    
+    for (int i = 0; i < lenA; i++) {
         char carryOver = '0';
-        char iArray[MAX_LEN];
-        resetArr(iArray);
+        resetArray(iArray);
         int j = 0;
-        for (j = 0; j < strlen(bArray); j++) {
+        for (j = 0; j < lenB; j++) {
             int aDigit = valueOf(aArray[i]);
             int bDigit = valueOf(bArray[j]);
             char productAsString[2];
@@ -140,13 +144,26 @@ void multiplyArrays(char aArray[], char bArray[], int base, char rArray[]) {
             iArray[j+i] = productAsString[0];
             carryOver = productAsString[1];
         }
-
         iArray[j+i] = carryOver;
-        char tempArray[MAX_LEN];
-        addArrays(rArray, iArray, base, tempArray);
-        copyArrays(tempArray, rArray);
+
+        // Add iArray to existing rArray
+        carryOver = '0';
+        for (int k = i; k <= j+i; k++) {
+            int aDigit = valueOf(rArray[k]);
+            int bDigit = valueOf(iArray[k]);
+            char productAsString[2];
+            intToString(aDigit + bDigit + valueOf(carryOver), base, productAsString);
+            rArray[k] = productAsString[0];
+            carryOver = productAsString[1];
+        }
+        rArray[j+i+1] = carryOver;
     }
 }
+
+long int milisecond(struct timeval tp){
+    long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    return ms;
+};
 
 int main() {
     int T;
@@ -155,7 +172,7 @@ int main() {
     string V, M, P;
     char vArray[MAX_LEN];
     char mArray[MAX_LEN];
-    char rArray[MAX_LEN];
+    char *rArray = new char[MAX_LEN];
     for (int i = 0; i < T; i++) {
         cin >> base;
         cin >> V;
@@ -163,9 +180,9 @@ int main() {
         reverseStr(V);
         reverseStr(M);
 
-        resetArr(vArray);
-        resetArr(mArray);
-        resetArr(rArray);
+        resetArray(vArray);
+        resetArray(mArray);
+        resetArray(rArray);
 
         convertStrToArr(V, vArray);
         convertStrToArr(M, mArray);
