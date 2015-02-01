@@ -10,12 +10,17 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <string>
 
 using namespace std;
 
 const string digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const char RADIX_POINT = '.';
 const int MAX_LEN = 10010;
+
+int lenV;
+int lenM;
+int lenTotal;
 
 int valueOf(char x) { // integer value of a digit
     if ('0' <= x and x <= '9') {
@@ -64,17 +69,24 @@ string trim(string aStr) {
     return X;
 };
 
-
-void convertStrToArr(string str, char* arr) {
-    strcpy(arr, str.c_str());
-};
-
-void resetArray(char* arr) {
-    memset(arr, '\0', sizeof(char) * MAX_LEN);
+void resetArray(int* arr, int len) {
+    memset(arr, 0, sizeof(int) * len);
 }
 
-string convertArrToStr(char arr[]) {
-    string S(arr);
+void convertStrToIntArr(string str, int* arr, int len) {
+    string::iterator it;
+    int i = 0;
+    for (it = str.begin(); it < str.end(); it++, i++) {
+        arr[i] = valueOf(*it);
+    }
+};
+
+string convertIntArrToStr(int arr[], int len) {
+    char *tmp = new char[len];
+    for (int i = 0; i < len; i++) {
+        tmp[i] = digitOf(arr[i]);
+    }
+    string S(tmp);
     return S;
 };
 
@@ -82,7 +94,7 @@ void reverseStr(string &str) {
     std::reverse(str.begin(), str.end());
 };
 
-void printArray(char arr[]) {
+void printStrArray(char arr[]) {
     int len = strlen(arr);
     for (int i = 0; i < len; i++) {
         cout << arr[i];
@@ -90,73 +102,56 @@ void printArray(char arr[]) {
     cout << endl;
 };
 
-void printArrayAsNumber(char arr[]) {
-    string sum = convertArrToStr(arr);
-    reverseStr(sum);
-    cout << trim(sum) << endl;
+void printIntArray(int arr[], int len) {
+    for (int i = 0; i < len; i++) {
+        cout << arr[i];
+    }
+    cout << endl;
+};
+
+void printArrayAsNumber(int arr[], int len) {
+
+    string result = "";
+    for (int i = len-1; i >= 0; i--) {
+        result.append(1, digitOf(arr[i]));
+    }
+
+    cout << trim(result) << endl;
 }
 
-void intToString(int number, int base, char arr[]) {
+void intToString(int number, int base, int arr[]) {
     arr[0] = digitOf(number % base);
     arr[1] = digitOf(number / base);
 };
 
-// void copyArrays(char srcArray[], char dstArray[]) {
-//     for (int i = 0; i < MAX_LEN; i++) {
-//         dstArray[i] = srcArray[i];
-//     }
-// }
+void multiplyArrays(int aArray[], int bArray[], int lenA, int lenB, int base, int rArray[]) {
+    int lenTotal = lenA + lenB;
+    resetArray(rArray, lenTotal);
 
-// void addArrays(char aArray[], char bArray[], int base, char rArray[]) {
-//     resetArray(rArray);
-//     int lenA = strlen(aArray);
-//     int lenB = strlen(bArray);
-//     cout << lenA << endl;
-//     cout << lenB << endl;
-//     int longerLength = lenA > lenB ? lenA : lenB;
-//     char carryOver = '0';
-//     for (int i = 0; i < longerLength; i++) {
-//         int aDigit = valueOf(aArray[i]);
-//         int bDigit = valueOf(bArray[i]);
-//         char productAsString[2];
-//         intToString(aDigit + bDigit + valueOf(carryOver), base, productAsString);
-//         rArray[i] = productAsString[0];
-//         carryOver = productAsString[1];
-//     }
-//     rArray[longerLength] = carryOver;
-// }
-
-void multiplyArrays(char aArray[], char bArray[], int base, char rArray[]) {
-    resetArray(rArray);
-    char iArray[MAX_LEN];
-    char *tempArray = new char[MAX_LEN];
-    int lenA = strlen(aArray);
-    int lenB = strlen(bArray);    
+    int iArray[lenTotal];
+    int *tempArray = new int[lenTotal];
+    int carryOver = 0;
     for (int i = 0; i < lenA; i++) {
-        char carryOver = '0';
-        resetArray(iArray);
+        carryOver = 0;
+        resetArray(iArray, lenTotal);
         int j = 0;
         for (j = 0; j < lenB; j++) {
-            int aDigit = valueOf(aArray[i]);
-            int bDigit = valueOf(bArray[j]);
-            char productAsString[2];
-            intToString(aDigit * bDigit + valueOf(carryOver), base, productAsString);
-            iArray[j+i] = productAsString[0];
-            carryOver = productAsString[1];
+            int product = aArray[i] * bArray[j] + carryOver;
+            iArray[j+i] = product % base;
+            carryOver = product / base;
         }
         iArray[j+i] = carryOver;
 
         // Add iArray to existing rArray
-        carryOver = '0';
+        carryOver = 0;
         for (int k = i; k <= j+i; k++) {
-            int aDigit = valueOf(rArray[k]);
-            int bDigit = valueOf(iArray[k]);
-            char productAsString[2];
-            intToString(aDigit + bDigit + valueOf(carryOver), base, productAsString);
-            rArray[k] = productAsString[0];
-            carryOver = productAsString[1];
+            int product = rArray[k] + iArray[k] + carryOver;
+            rArray[k] = product % base;
+            carryOver = product / base;
         }
+        // cout << j+i << endl;
         rArray[j+i+1] = carryOver;
+        // cout << lenA << "," << lenB << "," << j+i << endl;
     }
 }
 
@@ -170,25 +165,31 @@ int main() {
     cin >> T;
     int base;
     string V, M, P;
-    char vArray[MAX_LEN];
-    char mArray[MAX_LEN];
-    char *rArray = new char[MAX_LEN];
     for (int i = 0; i < T; i++) {
         cin >> base;
         cin >> V;
         cin >> M;
         reverseStr(V);
         reverseStr(M);
+        
+        lenV = V.length();
+        lenM = M.length();
+        lenTotal = lenV + lenM;
 
-        resetArray(vArray);
-        resetArray(mArray);
-        resetArray(rArray);
+        int vArray[lenV];
+        int mArray[lenM];
+        int *rArray = new int[lenTotal];
 
-        convertStrToArr(V, vArray);
-        convertStrToArr(M, mArray);
-        multiplyArrays(vArray, mArray, base, rArray);
+        resetArray(vArray, lenV);
+        resetArray(mArray, lenM);
+        resetArray(rArray, lenTotal);
 
-        printArrayAsNumber(rArray);
+        convertStrToIntArr(V, vArray, lenV);
+        convertStrToIntArr(M, mArray, lenM);
+        // cout << lenV << lenM << lenTotal << endl;
+        multiplyArrays(vArray, mArray, lenV, lenM, base, rArray);
+        // printIntArray(rArray, lenTotal);
+        printArrayAsNumber(rArray, lenTotal);
     };
 
     return 0;
