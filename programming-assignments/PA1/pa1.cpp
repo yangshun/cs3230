@@ -17,7 +17,8 @@ using namespace std;
 const string digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const char RADIX_POINT = '.';
 
-// Debugging functions
+// Debugging/printing functions
+
 void printStrArray(char arr[]) {
     int len = strlen(arr);
     for (int i = 0; i < len; i++) {
@@ -33,9 +34,10 @@ void printIntArray(int arr[], int len) {
     cout << endl;
 };
 
-// For conversion between integer and char (base context)
+// Functions for conversion between integer and char (base context)
 
-int valueOf(char x) { // integer value of a digit
+int valueOf(char x) { 
+    // integer value of a digit
     if ('0' <= x and x <= '9') {
         return x - '0';
     }
@@ -101,10 +103,13 @@ void convertStrToIntArr(string str, int* arr, int len) {
     }
 };
 
-void printArrayAsNumber(int arr[], int len) {
+void printArrayAsNumber(int arr[], int len, int radixPos) {
     string result = "";
     for (int i = len-1; i >= 0; i--) {
         result.append(1, digitOf(arr[i]));
+        if (i == radixPos) {
+            result.append(1, RADIX_POINT);
+        }
     }
 
     cout << trim(result) << endl;
@@ -154,12 +159,28 @@ int main() {
         reverseStr(M);
         
         int lenV = V.length();
+        int vRadixPos = V.find(RADIX_POINT);
+        if (vRadixPos != std::string::npos) {
+            lenV -= 1;
+            V.replace(vRadixPos, 1, "");
+        } else {
+            vRadixPos = 0;
+        }
+
         int lenM = M.length();
+        int mRadixPos = M.find(RADIX_POINT);
+        if (mRadixPos != std::string::npos) {
+            lenM -= 1;
+            M.replace(mRadixPos, 1, "");
+        } else {
+            mRadixPos = 0;
+        }
+
         int lenTotal = lenV + lenM;
 
         int vArray[lenV];
         int mArray[lenM];
-        int *rArray = new int[lenTotal+1];
+        int *rArray = new int[lenTotal];
 
         resetArray(vArray, lenV);
         resetArray(mArray, lenM);
@@ -168,7 +189,7 @@ int main() {
         convertStrToIntArr(V, vArray, lenV);
         convertStrToIntArr(M, mArray, lenM);
         multiplyArrays(vArray, mArray, lenV, lenM, base, rArray);
-        printArrayAsNumber(rArray, lenTotal);
+        printArrayAsNumber(rArray, lenTotal, vRadixPos + mRadixPos);
     }; 
 
     return 0;
