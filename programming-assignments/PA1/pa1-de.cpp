@@ -1,18 +1,31 @@
 // CS3230-PA1-DE
 // Multiplication of 2 n-digit integers.
-// Naive O(n^2) multiplication algorithm (Long Multiplication)
+// Naive O(n^2) multiplication algorithm (Karatsuba + Long Multiplication)
 // Name: Tay Yang Shun
 
+#include <sys/time.h>
+#include <sys/resource.h>
 #include <iostream>
+
 using namespace std;
+
 #define     FOR(i,s,e)      for(int (i) = (s); (i) <  (e); ++(i))
 #define     REP(i,n)        FOR(i,0,n)
 #define     FORE(i,s,e)     for(int (i) = (s); (i) <= (e); ++(i))
 
 const string    Digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const char      RADIX_POINT = '.';
-const int       MAXSIZE = 20200;
-const int       CUT_OFF = 3;
+const int       MAXSIZE = 40400;
+const int       CUT_OFF = 2000;
+
+long getMemoryUsage() {
+    struct rusage usage;
+    if(0 == getrusage(RUSAGE_SELF, &usage)) {
+        return usage.ru_maxrss / 1000; // bytes
+    } else {
+        return 0;
+    }
+}
 
 inline int valueOf(char x){ // integer value of a digit
     if ('0' <= x and x <= '9') return x - '0';
@@ -144,56 +157,6 @@ inline void subtract(int *A, int *B, int base) {
     A[0] = lenA;
 };
 
-// Multiply an array A to a digit d
-// temp = A * d;
-inline int* mul(int *A, int d, int base){
-    int lenA  = A[0];
-    temp[0] = lenA;
-    int carry = 0;
-    int i = 1;
-
-    while (i<=lenA or carry>0) {
-        if (i > lenA) {
-            A[i] = 0;
-        }
-
-        carry = A[i] * d + carry;
-        temp[i] = carry % base;
-        carry = carry / base;
-
-        i++;
-    };
-
-    i--;
-    while (i>1 and temp[i]==0) {
-        i--;
-    }
-
-    if (i>=lenA) {
-        temp[0] = i;
-    }
-
-    return temp;
-};
-
-// Multiply 2 arrays:
-// A = A * B;
-int* mul(int *A, int* B, int base){
-    temp = new int[MAXSIZE];
-    res = new int[MAXSIZE];
-    REP(i, A[0]+2) res[i] = 0;
-
-    int i = 1;
-    while (i<=B[0]) {
-        // REP(j,C[0]+2) D[j]=C[j];
-        temp = mul(A, B[i], base);
-        add(res, temp, i-1, base);
-        i++;
-    };
-
-    return res;
-};
-
 // Faster multiplication:
 // res = A * B;
 int* mulTwoArrays(int *A, int *B, int base) {
@@ -236,13 +199,6 @@ void splitAt(int *input, int *high, int *low, int R) {
         high[i] = (i <= lenInput) ? input[i+R] : 0;
     }
     high[0] = (lenInput - R > 0) ? lenInput - R : 0;
-}
-
-void printIntArray(int arr[]) {
-    for (int i = 10; i >= 1; i--) {
-        cout << arr[i];
-    }
-    cout << endl;
 };
 
 int* karatsuba(int *A, int *B, int base) {
@@ -250,7 +206,7 @@ int* karatsuba(int *A, int *B, int base) {
     int lenB = B[0];
 
     if (lenA < CUT_OFF or lenB < CUT_OFF) {
-        return mul(A, B, base);
+        return mulTwoArrays(A, B, base);
     }
 
     int R = ((lenA > lenB ? lenA : lenB)+1) / 2;
@@ -295,6 +251,6 @@ int main() {
 
         cout << convertIntArr2Str(karatsuba(A, B, base), 0) << endl;
     };
-
+    // cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
     return 0;
 }
