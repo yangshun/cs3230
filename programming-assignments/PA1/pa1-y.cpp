@@ -17,10 +17,9 @@ using namespace std;
 
 const string    Digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const char      RADIX_POINT = '.';
-const int       CHUNK_SIZE = 4;
-const int       MAXSIZE = 126000;
+const int       CHUNK_SIZE = 3;
+const int       MAXSIZE = 400000;
 const int       CUT_OFF = 2000;
-
 const int       CHUNK_BASE = pow(10, CHUNK_SIZE);
 
 long getMemoryUsage() {
@@ -90,17 +89,29 @@ void convert2IntArr(string X, int *A){
         A[j] = num;
         j++;
     }
-    // for (int i = 1; i <= A[0]; i++) {
-    //     cout << A[i] << endl;
-    // }
+}
+
+string numberToString(int number) {
+    string s = "";
+    if (number == 0) {
+        return "0";
+    } else {
+        while (number > 0) {
+            int digit = number % 10;
+            s = Digits[digit] + s;
+            number /= 10;
+        }
+        return s;
+    }
 }
 
 // Convert an array A to string:
 string convertIntArr2Str(int *A){
     string result = "";
     int len = A[0];
+    
     for (int i = len; i >= 1; i--) {
-        string s = to_string(A[i]);
+        string s = numberToString(A[i]);
         int currLen = s.length();
         for (int j = 0; j < CHUNK_SIZE - currLen; j++) {
             s = "0" + s;
@@ -159,6 +170,7 @@ inline void subtract(int *A, int *B, int base) {
                 j++;
             }
             A[j] -= 1;
+            int temp = A[i];
             A[i] = base + A[i] - B[i];
         } else {
             A[i] -= B[i];
@@ -172,7 +184,7 @@ inline void subtract(int *A, int *B, int base) {
 
 // Faster multiplication:
 // res = A * B;
-int* mulTwoArrays(int *A, int *B) {
+int* mulTwoArrays(int *A, int *B, int base) {
     res = new int[MAXSIZE];
     temp = new int[MAXSIZE];
     REP(i, A[0]+2) res[i] = temp[i] = 0;
@@ -188,8 +200,8 @@ int* mulTwoArrays(int *A, int *B) {
     int carry = 0;
     FORE(i, 1, lenR) {
         carry += temp[i];
-        res[i] = carry % CHUNK_BASE;
-        carry  = carry / CHUNK_BASE;
+        res[i] = carry % base;
+        carry  = carry / base;
     };
 
     while (lenR>1 and res[lenR] == 0) {
@@ -219,7 +231,7 @@ int* karatsuba(int *A, int *B, int base) {
     int lenB = B[0];
 
     if (lenA < CUT_OFF or lenB < CUT_OFF) {
-        return mulTwoArrays(A, B);
+        return mulTwoArrays(A, B, base);
     }
 
     int R = ((lenA > lenB ? lenA : lenB)+1) / 2;
@@ -259,8 +271,8 @@ int main() {
 
         convert2IntArr(V, A);
         convert2IntArr(M, B);
-        cout << convertIntArr2Str(mulTwoArrays(A, B)) << endl;
+        cout << convertIntArr2Str(karatsuba(A, B, CHUNK_BASE)) << endl;
     };
-    cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
+    // cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
     return 0;
 }
