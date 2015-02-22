@@ -197,7 +197,7 @@ inline void subtractFast(int64_t *A, int64_t *B, int64_t *C, int64_t base) {
     int64_t len = bIsLonger ? lenB : lenC;
 
     for (int64_t i = 1; i <= lenB; i++) {
-        if (A[i] < C[i]) {
+        if (A[i] < B[i]) {
             int64_t j = i + 1;
             while (A[j] == 0) {
                 A[j] = base - 1;
@@ -325,6 +325,6 @@ int main() {
         string s = convertIntArr2Str(karatsuba(A, B, CHUNK_BASE));
         cout << s << endl;
     };
-    // cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
+    cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
     return 0;
 }
