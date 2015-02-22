@@ -19,8 +19,8 @@ using namespace std;
 const string        Digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const char          RADIX_POINT = '.';
 const int64_t       CHUNK_SIZE = 8;
-const int64_t       MAXSIZE = 200000;
-const int64_t       CUT_OFF = 500;
+const int64_t       MAXSIZE = 130000;
+const int64_t       CUT_OFF = 300;
 const int64_t       CHUNK_BASE = pow(10, CHUNK_SIZE);
 
 long getMemoryUsage() {
@@ -189,22 +189,16 @@ inline void subtractFast(int64_t *A, int64_t *B, int64_t *C, int64_t base) {
     int64_t lenA = A[0];
     int64_t lenB = B[0];
     int64_t lenC = C[0];
-    
-    int64_t digitB = 0;
-    int64_t digitC = 0;
 
-    int bIsLonger = lenB > lenC;
-    int64_t len = bIsLonger ? lenB : lenC;
-
+    int64_t j;
     for (int64_t i = 1; i <= lenB; i++) {
         if (A[i] < B[i]) {
-            int64_t j = i + 1;
+            j = i + 1;
             while (A[j] == 0) {
                 A[j] = base - 1;
                 j++;
             }
             A[j] -= 1;
-            int64_t temp = A[i];
             A[i] = base + A[i] - B[i];
         } else {
             A[i] -= B[i];
@@ -213,13 +207,12 @@ inline void subtractFast(int64_t *A, int64_t *B, int64_t *C, int64_t base) {
 
     for (int64_t i = 1; i <= lenC; i++) {
         if (A[i] < C[i]) {
-            int64_t j = i + 1;
+            j = i + 1;
             while (A[j] == 0) {
                 A[j] = base - 1;
                 j++;
             }
             A[j] -= 1;
-            int64_t temp = A[i];
             A[i] = base + A[i] - C[i];
         } else {
             A[i] -= C[i];
@@ -240,6 +233,7 @@ inline int64_t* mulTwoArrays(int64_t *A, int64_t *B, int64_t base) {
 
     res = new int64_t[MAXSIZE];
     temp = new int64_t[MAXSIZE];
+
     REP(i, A[0]+2) res[i] = temp[i] = 0;
 
     FORE(i, 1, lenA)
@@ -259,6 +253,7 @@ inline int64_t* mulTwoArrays(int64_t *A, int64_t *B, int64_t base) {
         lenR--;
     }
     res[0] = lenR;
+    delete[] temp;
 
     return res;
 };
@@ -306,7 +301,8 @@ int64_t* karatsuba(int64_t *A, int64_t *B, int64_t base) {
     subtractFast(z1, z0, z2, base);
     add(z0, z2, 2 * R, base);
     add(z0, z1, R, base);
-
+    delete[] z1;
+    delete[] z2;
     return z0;
 }
 
@@ -325,6 +321,6 @@ int main() {
         string s = convertIntArr2Str(karatsuba(A, B, CHUNK_BASE));
         cout << s << endl;
     };
-    cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
+    // cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
     return 0;
 }
