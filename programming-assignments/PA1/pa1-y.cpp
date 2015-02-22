@@ -8,19 +8,20 @@
 #include <iostream>
 #include <sstream>
 #include <math.h>
+#include <stdint.h>
 
 using namespace std;
 
-#define     FOR(i,s,e)      for(int (i) = (s); (i) <  (e); ++(i))
+#define     FOR(i,s,e)      for(int64_t (i) = (s); (i) <  (e); ++(i))
 #define     REP(i,n)        FOR(i,0,n)
-#define     FORE(i,s,e)     for(int (i) = (s); (i) <= (e); ++(i))
+#define     FORE(i,s,e)     for(int64_t (i) = (s); (i) <= (e); ++(i))
 
-const string    Digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const char      RADIX_POINT = '.';
-const int       CHUNK_SIZE = 3;
-const int       MAXSIZE = 400000;
-const int       CUT_OFF = 2000;
-const int       CHUNK_BASE = pow(10, CHUNK_SIZE);
+const string        Digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const char          RADIX_POINT = '.';
+const int64_t       CHUNK_SIZE = 8;
+const int64_t       MAXSIZE = 200000;
+const int64_t       CUT_OFF = 500;
+const int64_t       CHUNK_BASE = pow(10, CHUNK_SIZE);
 
 long getMemoryUsage() {
     struct rusage usage;
@@ -31,13 +32,13 @@ long getMemoryUsage() {
     }
 }
 
-inline int valueOf(char x){ // integer value of a digit
+inline int64_t valueOf(char x){ // integer value of a digit
     if ('0' <= x and x <= '9') return x - '0';
     if ('A' <= x and x <= 'Z') return x - 'A' +10;
     return 255;
 };
 
-int A[MAXSIZE], B[MAXSIZE], *temp, *res;
+int64_t A[MAXSIZE], B[MAXSIZE], *temp, *res;
 
 // Trim unnecessary zeros and radix point
 string trim(string aStr){
@@ -66,24 +67,24 @@ string trim(string aStr){
 // Digits are stored in reverse order, example:
 // X = "123456789"
 // A = {3,6789,2345,1};
-void convert2IntArr(string X, int *A){
+void convert2IntArr(string X, int64_t *A){
 
     X = trim(X);
-    int len = X.length() / CHUNK_SIZE;
-    int rem = (X.length() % CHUNK_SIZE);
-    int padLength;
+    int64_t len = X.length() / CHUNK_SIZE;
+    int64_t rem = (X.length() % CHUNK_SIZE);
+    int64_t padLength;
     if (rem > 0) {
         padLength = CHUNK_SIZE - rem;
-        for (int i = 0; i < padLength; i++) {
+        for (int64_t i = 0; i < padLength; i++) {
             X = "0" + X;
         }
         len += 1;
     }
     A[0] = len;
-    int j = 1;
-    for (int i = X.length()-1; i >= 0; i-=CHUNK_SIZE) {
-        int num = 0;
-        for (int k = 0; k < CHUNK_SIZE; k++) {
+    int64_t j = 1;
+    for (int64_t i = X.length()-1; i >= 0; i-=CHUNK_SIZE) {
+        int64_t num = 0;
+        for (int64_t k = 0; k < CHUNK_SIZE; k++) {
             num += valueOf(X[i-k]) * pow(10, k);
         }
         A[j] = num;
@@ -91,13 +92,13 @@ void convert2IntArr(string X, int *A){
     }
 }
 
-string numberToString(int number) {
+string numberToString(int64_t number) {
     string s = "";
     if (number == 0) {
         return "0";
     } else {
         while (number > 0) {
-            int digit = number % 10;
+            int64_t digit = number % 10;
             s = Digits[digit] + s;
             number /= 10;
         }
@@ -106,14 +107,14 @@ string numberToString(int number) {
 }
 
 // Convert an array A to string:
-string convertIntArr2Str(int *A){
+string convertIntArr2Str(int64_t *A){
     string result = "";
-    int len = A[0];
+    int64_t len = A[0];
     
-    for (int i = len; i >= 1; i--) {
+    for (int64_t i = len; i >= 1; i--) {
         string s = numberToString(A[i]);
-        int currLen = s.length();
-        for (int j = 0; j < CHUNK_SIZE - currLen; j++) {
+        int64_t currLen = s.length();
+        for (int64_t j = 0; j < CHUNK_SIZE - currLen; j++) {
             s = "0" + s;
         }
         result += s;
@@ -123,13 +124,13 @@ string convertIntArr2Str(int *A){
 
 // Adding two arrays with offset: USEFUL for karatsuba algorithm!!
 // A = A + B * base^offset
-inline void add(int *A, int *B, int offset, int base){
-    int lenA = A[0], lenB = B[0];
-    int carry = 0;
-    int i = 1;
+inline void add(int64_t *A, int64_t *B, int64_t offset, int64_t base){
+    int64_t lenA = A[0], lenB = B[0];
+    int64_t carry = 0;
+    int64_t i = 1;
     offset++;
 
-    int b;
+    int64_t b;
     while (i <= lenB or carry > 0) {
         if (offset > lenA) {
             A[offset] = 0;
@@ -157,20 +158,20 @@ inline void add(int *A, int *B, int offset, int base){
     }
 };
 
-inline void subtract(int *A, int *B, int base) {
+inline void subtract(int64_t *A, int64_t *B, int64_t base) {
     // A = A - B
     // Requirement: A > B
-    int lenA = A[0];
-    int lenB = B[0];
-    for (int i = 1; i <= lenB; i++) {
+    int64_t lenA = A[0];
+    int64_t lenB = B[0];
+    for (int64_t i = 1; i <= lenB; i++) {
         if (A[i] < B[i]) {
-            int j = i + 1;
+            int64_t j = i + 1;
             while (A[j] == 0) {
                 A[j] = base - 1;
                 j++;
             }
             A[j] -= 1;
-            int temp = A[i];
+            int64_t temp = A[i];
             A[i] = base + A[i] - B[i];
         } else {
             A[i] -= B[i];
@@ -184,20 +185,20 @@ inline void subtract(int *A, int *B, int base) {
 
 // Faster multiplication:
 // res = A * B;
-int* mulTwoArrays(int *A, int *B, int base) {
-    res = new int[MAXSIZE];
-    temp = new int[MAXSIZE];
+inline int64_t* mulTwoArrays(int64_t *A, int64_t *B, int64_t base) {
+    res = new int64_t[MAXSIZE];
+    temp = new int64_t[MAXSIZE];
     REP(i, A[0]+2) res[i] = temp[i] = 0;
-    int lenA = A[0];
-    int lenB = B[0];
+    int64_t lenA = A[0];
+    int64_t lenB = B[0];
 
     FORE(i, 1, lenA)
     FORE(j, 1, lenB) {
         temp[i+j-1] += A[i] * B[j];
     };
 
-    int lenR = lenA + lenB + 1;
-    int carry = 0;
+    int64_t lenR = lenA + lenB + 1;
+    int64_t carry = 0;
     FORE(i, 1, lenR) {
         carry += temp[i];
         res[i] = carry % base;
@@ -212,44 +213,44 @@ int* mulTwoArrays(int *A, int *B, int base) {
     return res;
 };
 
-void splitAt(int *input, int *high, int *low, int R) {
-    int lenInput = input[0];
+inline void splitAt(int64_t *input, int64_t *high, int64_t *low, int64_t R) {
+    int64_t lenInput = input[0];
 
-    for (int i = 1; i <= R; i++) {
+    for (int64_t i = 1; i <= R; i++) {
         low[i] = (i <= lenInput) ? input[i] : 0;
     }
     low[0] = (lenInput <= R) ? lenInput : R;
 
-    for (int i = 1; i <= R; i++) {
+    for (int64_t i = 1; i <= R; i++) {
         high[i] = (i <= lenInput) ? input[i+R] : 0;
     }
     high[0] = (lenInput - R > 0) ? lenInput - R : 0;
 };
 
-int* karatsuba(int *A, int *B, int base) {
-    int lenA = A[0];
-    int lenB = B[0];
+int64_t* karatsuba(int64_t *A, int64_t *B, int64_t base) {
+    int64_t lenA = A[0];
+    int64_t lenB = B[0];
 
     if (lenA < CUT_OFF or lenB < CUT_OFF) {
         return mulTwoArrays(A, B, base);
     }
 
-    int R = ((lenA > lenB ? lenA : lenB)+1) / 2;
+    int64_t R = ((lenA > lenB ? lenA : lenB)+1) / 2;
 
-    int highX[R+2];
-    int lowX[R+2];
-    int highY[R+2];
-    int lowY[R+2];
+    int64_t highX[R+2];
+    int64_t lowX[R+2];
+    int64_t highY[R+2];
+    int64_t lowY[R+2];
     splitAt(A, highX, lowX, R);
     splitAt(B, highY, lowY, R);
 
-    int *z0 = karatsuba(lowX, lowY, base);
-    int *z2 = karatsuba(highX, highY, base);
+    int64_t *z0 = karatsuba(lowX, lowY, base);
+    int64_t *z2 = karatsuba(highX, highY, base);
 
     add(lowX, highX, 0, base);
     add(lowY, highY, 0, base);
 
-    int *z1 = karatsuba(lowX, lowY, base);
+    int64_t *z1 = karatsuba(lowX, lowY, base);
 
     subtract(z1, z0, base);
     subtract(z1, z2, base);
@@ -260,9 +261,9 @@ int* karatsuba(int *A, int *B, int base) {
 }
 
 int main() {
-    int T;
+    int64_t T;
     string V, M, P;
-    int base;
+    int64_t base;
 
     cin >> T;
     FORE(t, 1, T) {
