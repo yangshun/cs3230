@@ -158,6 +158,74 @@ inline void add(int64_t *A, int64_t *B, int64_t offset, int64_t base){
     }
 };
 
+inline void addFast(int64_t *A, int64_t *B, int64_t *C, int64_t offset, int64_t base){
+    int64_t lenA = A[0], lenB = B[0];
+    int64_t carry = 0;
+    int64_t i = 1;
+    int64_t firstOffset = offset * 2 + 1;
+
+    int64_t b;
+    while (i <= lenB or carry > 0) {
+        if (firstOffset > lenA) {
+            A[firstOffset] = 0;
+        }
+        if (i > lenB) {
+            b = 0;
+        } else {
+            b = B[i];
+        }
+
+        carry = A[firstOffset] + b + carry;
+        A[firstOffset] = carry % base;
+        carry = carry >= base ? 1 : 0;
+
+        i++;
+        firstOffset++;
+    };
+
+    firstOffset--;
+    while (firstOffset > 1 and A[firstOffset] == 0) {
+        firstOffset--;
+    }
+    if (firstOffset > lenA) {
+        A[0] = firstOffset;
+    }
+
+    // Second
+    lenA = A[0];
+    int64_t lenC = C[0];
+    carry = 0;
+    i = 1;
+    int64_t c;
+    offset++;
+
+    while (i <= lenC or carry > 0) {
+        if (offset > lenA) {
+            A[offset] = 0;
+        }
+        if (i > lenC) {
+            c = 0;
+        } else {
+            c = C[i];
+        }
+
+        carry = A[offset] + c + carry;
+        A[offset] = carry % base;
+        carry = carry >= base ? 1 : 0;
+
+        i++;
+        offset++;
+    };
+
+    offset--;
+    while (offset > 1 and A[offset] == 0) {
+        offset--;
+    }
+    if (offset > lenA) {
+        A[0] = offset;
+    }
+};
+
 inline void subtract(int64_t *A, int64_t *B, int64_t base) {
     // A = A - B
     // Requirement: A > B
@@ -299,8 +367,8 @@ int64_t* karatsuba(int64_t *A, int64_t *B, int64_t base) {
     int64_t *z1 = karatsuba(lowX, lowY, base);
 
     subtractFast(z1, z0, z2, base);
-    add(z0, z2, 2 * R, base);
-    add(z0, z1, R, base);
+    addFast(z0, z2, z1, R, base);
+
     delete[] z1;
     delete[] z2;
     return z0;
