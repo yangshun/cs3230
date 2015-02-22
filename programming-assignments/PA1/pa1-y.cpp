@@ -183,14 +183,64 @@ inline void subtract(int64_t *A, int64_t *B, int64_t base) {
     A[0] = lenA;
 };
 
+inline void subtractFast(int64_t *A, int64_t *B, int64_t *C, int64_t base) {
+    // A = A - B - C
+    // Requirement: A > B
+    int64_t lenA = A[0];
+    int64_t lenB = B[0];
+    int64_t lenC = C[0];
+    
+    int64_t digitB = 0;
+    int64_t digitC = 0;
+
+    int bIsLonger = lenB > lenC;
+    int64_t len = bIsLonger ? lenB : lenC;
+
+    for (int64_t i = 1; i <= lenB; i++) {
+        if (A[i] < C[i]) {
+            int64_t j = i + 1;
+            while (A[j] == 0) {
+                A[j] = base - 1;
+                j++;
+            }
+            A[j] -= 1;
+            int64_t temp = A[i];
+            A[i] = base + A[i] - B[i];
+        } else {
+            A[i] -= B[i];
+        }
+    }
+
+    for (int64_t i = 1; i <= lenC; i++) {
+        if (A[i] < C[i]) {
+            int64_t j = i + 1;
+            while (A[j] == 0) {
+                A[j] = base - 1;
+                j++;
+            }
+            A[j] -= 1;
+            int64_t temp = A[i];
+            A[i] = base + A[i] - C[i];
+        } else {
+            A[i] -= C[i];
+        }
+    }
+
+    while (lenA > 1 and A[lenA] == 0) {
+        lenA--;
+    }
+    A[0] = lenA;
+};
+
 // Faster multiplication:
 // res = A * B;
 inline int64_t* mulTwoArrays(int64_t *A, int64_t *B, int64_t base) {
+    int64_t lenA = A[0];
+    int64_t lenB = B[0];
+
     res = new int64_t[MAXSIZE];
     temp = new int64_t[MAXSIZE];
     REP(i, A[0]+2) res[i] = temp[i] = 0;
-    int64_t lenA = A[0];
-    int64_t lenB = B[0];
 
     FORE(i, 1, lenA)
     FORE(j, 1, lenB) {
@@ -225,6 +275,7 @@ inline void splitAt(int64_t *input, int64_t *high, int64_t *low, int64_t R) {
         high[i] = (i <= lenInput) ? input[i+R] : 0;
     }
     high[0] = (lenInput - R > 0) ? lenInput - R : 0;
+
 };
 
 int64_t* karatsuba(int64_t *A, int64_t *B, int64_t base) {
@@ -252,8 +303,7 @@ int64_t* karatsuba(int64_t *A, int64_t *B, int64_t base) {
 
     int64_t *z1 = karatsuba(lowX, lowY, base);
 
-    subtract(z1, z0, base);
-    subtract(z1, z2, base);
+    subtractFast(z1, z0, z2, base);
     add(z0, z2, 2 * R, base);
     add(z0, z1, R, base);
 
@@ -272,7 +322,8 @@ int main() {
 
         convert2IntArr(V, A);
         convert2IntArr(M, B);
-        cout << convertIntArr2Str(karatsuba(A, B, CHUNK_BASE)) << endl;
+        string s = convertIntArr2Str(karatsuba(A, B, CHUNK_BASE));
+        cout << s << endl;
     };
     // cout << "Memory used: " << getMemoryUsage() << " KB" << endl;
     return 0;
