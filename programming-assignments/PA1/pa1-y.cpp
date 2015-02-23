@@ -331,14 +331,10 @@ inline void splitAt(int64_t *input, int64_t *high, int64_t *low, int64_t R) {
 
     for (int64_t i = 1; i <= R; i++) {
         low[i] = (i <= lenInput) ? input[i] : 0;
-    }
-    low[0] = (lenInput <= R) ? lenInput : R;
-
-    for (int64_t i = 1; i <= R; i++) {
         high[i] = (i <= lenInput) ? input[i+R] : 0;
     }
+    low[0] = (lenInput <= R) ? lenInput : R;
     high[0] = (lenInput - R > 0) ? lenInput - R : 0;
-
 };
 
 int64_t* karatsuba(int64_t *A, int64_t *B, int64_t base) {
