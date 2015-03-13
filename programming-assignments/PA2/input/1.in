@@ -1,0 +1,34 @@
+5
+2 2
+AA BB 
+BB AA
+3
+AA BB CC
+3 4
+V1 V2
+V1 V3
+V2 V3
+V3 V1
+4 
+V1 V2 V3 V1
+3 4 
+V1 V2 
+V1 V3 
+V2 V3 
+V2 V1 
+4
+V3 V1 V2 V3
+3 4 
+AA bb 
+AA CC 
+bb CC 
+CC AA 
+3 
+AA bb CC
+3 4 
+V1 V2 
+V1 V3 
+V2 V3 
+V1 V1 
+4 
+V1 V2 V1 V1

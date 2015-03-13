@@ -1,0 +1,172 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+</head>
+<body>
+<font color="blue">Programming Assignment 2 - Part 1 (tasks A,B) <br>
+CS3230 - Design and Analysis of Algorithms <br>
+Spring - 2015 </font>
+<hr>
+<h1 align="center">Graphs Transformation </h1>
+<h2>Background</h2>
+Previously, Anka's team has successfully built a software module for fast multiplication. Now, they are integrating this software module into the spaceship's software system. In this software system, each software module may depend on other modules to run,
+ thus forming a big dependency graph. The team wants to check whether there is a simple cycle of dependencies that involes all modules. Anka hasn't found any efficent solution for this problem yet.
+<p>She realized that this problem is exactly the same as the <i>Hamiltonian Cycle
+</i>problem, which is hard. To solve it, she may need to efficiently reduce the problem into other relevant problems. She decided to master the reduction technique, so she is doing some homeworks. Can you help her to transform the problems in C&#43;&#43; or Java?
+</p>
+<h2>Relevant Problems and Algorithm</h2>
+<b><i>Directed Hamiltonian Cycle problem (Dir_Ham_Cyc):</i></b> <br>
+Consider a directed graph Gd = (V,E) of N vertices.<br>
+Decide whether there exists a simple directed cycle Cd that contains every vertex exactly once.<br>
+<br>
+<b><i>Undirected Hamiltonian Cycle problem (Undir_Ham_Cyc):</i></b> <br>
+Consider an undirected graph Gu = (V,E) of N vertices. <br>
+Decide whether there exixts a simple undirected cycle Cu that contains every vertex exactly once.
+<br>
+<h3>Poly-Time Transformation Algorithm</h3>
+Transformation from <b>Dir_Ham_Cyc</b> to <b>Undir_Ham_Cyc:</b>
+<pre>
+Input: G = (Vg,Eg);
+Build H = (V,E) -- an undirected graph, where:
+	1. Each vertex v in Vg is transformed into 3 vertices in V: <font color="blue">hv</font> (head-vertex of v), <b>v</b>, and <font color="red"> tv </font> (tail-vertex of v);
+	2. For each v in Vg: undirected edges (tv,v) and (v,hv) are in E;
+	3. Each directed edge (u,v) in Eg is transformed into an undirected edge (hu, tv) in E.
+Output: H = (V,E)
+</pre>
+See picture for example. <br>
+<img src="transformation.jpg" alt="Problem Transformation" style="width:800px; height:200px">
+<h2>Task A (Verifier) [50 points]:</h2>
+Given a graph G, and a list P of vertices. You have to check whether P forms an undirected Hamiltonian cycle in G.
+<br>
+<br>
+<b>Input: </b><br>
+First line of input is the number T of testcases. Next are T blocks of lines, each block describes a testcase.<br>
+<br>
+<i>In each block:</i> <br>
+First line is N (number of vertices), M (number of edges) <br>
+Next M lines write 2 strings u,v describing an undirected edge (u,v), where u,v are names of the vertices.
+<br>
+Next line writes an integer number p - number of vertices in the path P. <br>
+Last line writes names of a p vertices, separated by a space. <br>
+<br>
+<b>Output:</b> <br>
+For each testcase in the input, output the corresponding answer on one line, i.e.:<br>
+Output &quot;YES&quot; if P is a undirected Hamiltonian cycle, output &quot;NO&quot; otherwise. <br>
+<br>
+<b>Constraints:</b> <br>
+Length of the vertex name is at most 6 characters. <br>
+1&lt;=T&lt;=50; 2&lt;=N &lt;=300; 2&lt;=M &lt;=30000. <br>
+Memory: 256M <br>
+Running time: <b>2 seconds</b> per T testcases. <br>
+<br>
+<b><i>Sample input:</i></b>
+<pre>
+5
+2 2
+AA BB 
+BB AA
+3
+AA BB CC
+3 4
+V1 V2
+V1 V3
+V2 V3
+V3 V1
+4 
+V1 V2 V3 V1
+3 4 
+V1 V2 
+V1 V3 
+V2 V3 
+V2 V1 
+4
+V3 V1 V2 V3
+3 4 
+AA bb 
+AA CC 
+bb CC 
+CC AA 
+3 
+AA bb CC
+3 4 
+V1 V2 
+V1 V3 
+V2 V3 
+V1 V1 
+4 
+V1 V2 V1 V1
+</pre>
+<b><i>Sample output:</i></b>
+<pre>
+NO
+YES
+YES
+NO
+NO 
+</pre>
+<h2>Task B (Poly-Time-Reduction) [50 points]:</h2>
+You have to transform an instance of <b>Dir_Ham_Cyc</b> into an instance of <b>Undir_Ham_Cyc</b>, such that an answer yes for the former implies an yes for the latter, and vice versa.
+
+Your transformation must follow the algorithm given above, with following constraints:
+
+if the name of the vertex in original graph is <b><i>Vxxxx</i></b>, then the head-vertex and tail-vertex of that vertex in transformation must have name
+<font color="blue"><i>Hxxxx</i> </font>and <font color="red"><i>Txxxx</i></font>. See picture for example.
+<br>
+<br>
+In addition, you need to output the edges in lexicographic order of the vertice's name.
+<br>
+<br>
+<b>Input: </b><br>
+First line of input is the number T of testcases. Next are T blocks of lines, each block describes a testcase (An instance of Dir_Ham_Cyc, that is, a directed graph Gd).<br>
+<i>In each block: </i>First line is two integer numbers: N (number of vertices), and M (number of edges)
+<br>
+Next M lines describe M edges: each line writes 2 strings u, v separated by a space, describing a directed edges (u,v), where u,v are names of the vertices.<br>
+<br>
+<b>Output: </b><br>
+<br>
+For each testcase in the input, you have to output a corresponding transformed graph (An instance of Undir_Ham_Cyc, that is, undirected graph Gu), with the following blocks of lines:<br>
+First line: Nv (number of vertices), and then Me (number of edges)<br>
+Next Me lines: Name of two vertices u and v for each edge (u,v) of the transformed graph, separated by a space.<br>
+<br>
+<b>Constraints:</b> <br>
+The name of vertices in the input is always started with &quot;V&quot;, with length at most 6.<br>
+<br>
+Since the transformed graph is undirected, an edge (u,v) is the same as (v,u). Thus, you <font color="blue"><i>have to count and output only the edge (u, v), where u &lt;= v (lexicographic order).</i></font>
+<br>
+The edges must be outputed in <font color="blue"><i>lexicographic order</i></font> of vertices' name. That is, for two edges (u,v) and (x,y): if u &lt; x, or if u==x and v &lt; y, the edge (u,v) must be outputed before (x,y). See sample output for example.
+<br>
+<br>
+1&lt;=T&lt;= 50; 2&lt;=Nv&lt;=300; 2&lt;=Me&lt;=30000<br>
+Memory: 256M <br>
+Running time: <b>2 seconds</b> per T testcases. <br>
+<br>
+<b><i>Sample input:</i></b><br>
+<pre>
+1
+4 5
+V11 V22
+V22 V33
+V33 V11
+V22 V44
+V44 V33
+</pre>
+<b><i>Sample output:</i></b><br>
+<pre>
+12 13
+H11 T22
+H11 V11
+H22 T33
+H22 T44
+H22 V22
+H33 T11
+H33 V33
+H44 T33
+H44 V44
+T11 V11
+T22 V22
+T33 V33
+T44 V44
+</pre>
+(End of problem's description)
+</body>
+</html>
