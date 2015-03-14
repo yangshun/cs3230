@@ -26,6 +26,7 @@ void verifyHamiltonianPath() {
     cin >> N >> M;
     // cout << "N: " << N << ", M: " << M << endl;
     map<string, map<string, bool> > nodes;
+    map<string, bool> graphNodes;
 
     for (unsigned int j = 0; j < M; j++) {
         string srcNode, dstNode;
@@ -35,12 +36,14 @@ void verifyHamiltonianPath() {
             nodes[srcNode] = connectedNodes;
         }
         nodes[srcNode][dstNode] = true;
+        graphNodes[srcNode] = true;
 
         if (nodes.find(dstNode) == nodes.end()) {
             map<string, bool> connectedNodes;
             nodes[dstNode] = connectedNodes;
         } 
         nodes[dstNode][srcNode] = true;
+        graphNodes[dstNode] = true;
         // cout << "Src: " << srcNode << ", Dst: " << dstNode << endl; 
     }
 
@@ -81,10 +84,10 @@ void verifyHamiltonianPath() {
 
     if (startNode != prevNode || 
         pathNodes.size() != P-1 || 
-        pathNodes.size() != nodes.size()) {
+        pathNodes != graphNodes) {
         // 1. Must start and end at the same node
         // 2. Path nodes must be unique
-        // 3. Path nodes must have same number of nodes as G
+        // 3. Path nodes must have same nodes as G
         isHamiltonianPath = false;
     }
 
