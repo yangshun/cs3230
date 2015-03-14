@@ -92,11 +92,14 @@ void verifyHamiltonianPath() {
     if (startNode != prevNode || 
         uniquePathNodes.size() != P-1 || 
         uniquePathNodes != graphNodes ||
-        uniquePathNodes.size() != graphNodes.size()) {
-        // 1. Must start and end at the same node
-        // 2. Path nodes must be unique
-        // 3. Path nodes must have same nodes as G
-        // 4. Path nodes must have same number of nodes as G
+        uniquePathNodes.size() != graphNodes.size() ||
+        N != P-1 ||
+        N != graphNodes.size()) {
+        //  1. Must start and end at the same node
+        //  2. Path nodes must be unique
+        //  3. Path nodes must have same nodes as G
+        //  4. Path nodes must have same number of nodes as G
+        //  5. Given number of nodes should be same as number of nodes in G
         isHamiltonianPath = false;
     }
 
