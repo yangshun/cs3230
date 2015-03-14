@@ -51,7 +51,7 @@ void verifyHamiltonianPath() {
     bool isHamiltonianPath = true;
     cin >> P;
     string startNode, pathNode, prevNode;
-    map<string, bool> pathNodes;
+    map<string, bool> uniquePathNodes;
     string * pathNodesArray = new string[P];
 
     for (unsigned int j = 0; j < P; j++) { 
@@ -78,16 +78,18 @@ void verifyHamiltonianPath() {
                 break;
             }
         }
-        pathNodes[pathNode] = true;
+        uniquePathNodes[pathNode] = true;
         prevNode = pathNode;
     }
 
     if (startNode != prevNode || 
-        pathNodes.size() != P-1 || 
-        pathNodes != graphNodes) {
+        uniquePathNodes.size() != P-1 || 
+        uniquePathNodes != graphNodes ||
+        uniquePathNodes.size() != graphNodes.size()) {
         // 1. Must start and end at the same node
         // 2. Path nodes must be unique
         // 3. Path nodes must have same nodes as G
+        // 4. Path nodes must have same number of nodes as G
         isHamiltonianPath = false;
     }
 
