@@ -4,14 +4,14 @@
 
 using namespace std;
 
-void printMap(map<string, map<string, bool> > nodes) {
+void printMap(map<string, map<string, int> > nodes) {
     cout << "start ------" << endl;
 
-    map<string, map<string, bool> >::reverse_iterator rit;
+    map<string, map<string, int> >::reverse_iterator rit;
     for (rit=nodes.rbegin(); rit!=nodes.rend(); ++rit) {
         cout << rit->first << " => length: " << rit->second.size() << '\n' << endl;
         
-        map<string, bool>::reverse_iterator rit2;
+        map<string, int>::reverse_iterator rit2;
         
         for (rit2=rit->second.rbegin(); rit2!=rit->second.rend(); ++rit2) {
             cout << "    " << rit2->first << " => " << rit2->second << '\n' << endl;
@@ -25,24 +25,26 @@ void verifyHamiltonianPath() {
     unsigned int N(0), M(0);
     cin >> N >> M;
     // cout << "N: " << N << ", M: " << M << endl;
-    map<string, map<string, bool> > nodes;
+    map<string, map<string, int> > nodes;
     map<string, bool> graphNodes;
 
     for (unsigned int j = 0; j < M; j++) {
         string srcNode, dstNode;
         cin >> srcNode >> dstNode;
         if (nodes.find(srcNode) == nodes.end()) {
-            map<string, bool> connectedNodes;
+            map<string, int> connectedNodes;
             nodes[srcNode] = connectedNodes;
+            nodes[srcNode][dstNode] = 0;
         }
-        nodes[srcNode][dstNode] = true;
+        nodes[srcNode][dstNode] += 1;
         graphNodes[srcNode] = true;
 
         if (nodes.find(dstNode) == nodes.end()) {
-            map<string, bool> connectedNodes;
+            map<string, int> connectedNodes;
             nodes[dstNode] = connectedNodes;
+            nodes[dstNode][srcNode] = 0;
         } 
-        nodes[dstNode][srcNode] = true;
+        nodes[dstNode][srcNode] += 1;
         graphNodes[dstNode] = true;
         // cout << "Src: " << srcNode << ", Dst: " << dstNode << endl; 
     }
@@ -68,15 +70,20 @@ void verifyHamiltonianPath() {
                 startNode = pathNode;
             }
         } else {
+            // cout << "Src:" << prevNode << ", Dst: " << pathNode << endl;
             if (nodes.find(pathNode) == nodes.end() ||
                 nodes.find(prevNode) == nodes.end() ||
-                !nodes[prevNode][pathNode] || 
-                !nodes[pathNode][prevNode]) {
+                nodes[prevNode][pathNode] == 0 || 
+                nodes[pathNode][prevNode] == 0) {
                 nodes[prevNode][pathNode] = false;
                 nodes[pathNode][prevNode] = false;
+                // cout << nodes[prevNode][pathNode] << ", " << nodes[pathNode][prevNode] << endl;
+                // cout << "Cannot find ^ edge!" << endl;
                 isHamiltonianPath = false;
                 break;
             }
+            nodes[prevNode][pathNode] -= 1;
+            nodes[pathNode][prevNode] -= 1;
         }
         uniquePathNodes[pathNode] = true;
         prevNode = pathNode;
