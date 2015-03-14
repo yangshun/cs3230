@@ -93,6 +93,20 @@ void verifyHamiltonianPath() {
         isHamiltonianPath = false;
     }
 
+    map<string, bool>::reverse_iterator rit;
+
+    for (rit = graphNodes.rbegin(); rit != graphNodes.rend(); ++rit) {
+        if (!uniquePathNodes[rit->first]) {
+            isHamiltonianPath = false;
+        }
+    }
+
+    for (rit = uniquePathNodes.rbegin(); rit != uniquePathNodes.rend(); ++rit) {
+        if (!graphNodes[rit->first]) {
+            isHamiltonianPath = false;
+        }
+    }
+
     cout << (isHamiltonianPath ? "YES" : "NO") << endl;
 
     delete [] pathNodesArray;
