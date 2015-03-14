@@ -1,23 +1,27 @@
-19
+18
+
 2 2
 AA AA
 BB AA
 3
 AA BB AA
-3 4 
+
+3 4
 V1 V2 
 V1 V3 
 V2 V3 
 V1 V1 
 4 
 V1 V2 V3 V2
-3 4 
+
+3 4
 V1 V2 
 V1 V3 
 V2 V3 
 V1 V1 
 4 
 V1 V2 V3 V3
+
 4 5
 V1 V2 
 V1 V3
@@ -26,6 +30,7 @@ V1 V1
 V3 V4
 4 
 V1 V2 V3 V1
+
 4 6
 V1 V2
 V1 V3
@@ -35,6 +40,7 @@ V3 V4
 V4 V1
 5
 V1 V2 V3 V4 V1
+
 4 6
 V1 V2
 V1 V3
@@ -44,6 +50,7 @@ V3 V4
 V4 V1
 5
 V1 V2 V4 V3 V1
+
 5 6
 V0 V1
 V1 V2
@@ -53,6 +60,7 @@ V3 V0
 V1 V3
 7
 V1 V2 V4 V1 V0 V3 V1
+
 5 7
 V0 V1
 V1 V2
@@ -63,6 +71,7 @@ V4 V3
 V3 V1
 6
 V1 V2 V4 V3 V0 V1
+
 5 4
 V0 V1
 V1 V2
@@ -70,6 +79,7 @@ V2 V3
 V3 V4
 6
 V0 V1 V2 V3 V4 V0
+
 5 5
 V0 V1
 V1 V2
@@ -78,6 +88,7 @@ V3 V4
 V4 V0
 6
 V0 V1 V2 V3 V4 V0
+
 5 7
 V0 V1
 V0 V2
@@ -88,6 +99,7 @@ V2 V3
 V3 V4
 6
 V0 V1 V2 V3 V4 V0
+
 5 7
 V0 V1
 V0 V2
@@ -98,6 +110,7 @@ V2 V3
 V3 V4
 11
 V0 V1 V2 V3 V4 V0 V1 V2 V3 V4 V0
+
 4 4
 V0 V1
 V1 V2
@@ -105,6 +118,7 @@ V2 V3
 V3 V1
 6
 V1 V0 V1 V3 V2 V1
+
 4 10
 V0 V1
 V1 V2
@@ -118,6 +132,7 @@ V1 V3
 V3 V0
 5
 V1 V0 V3 V2 V1
+
 6 6
 V0 V1
 V1 V2
@@ -127,22 +142,21 @@ V4 V5
 V5 V3
 7
 V0 V1 V2 V3 V4 V5 V0
+
 2 2
 V0 V1
 V0 V1
 3
 V1 V0 V1
+
 2 2
 V0 V1
 V1 V0
 3
 V0 V1 V0
-1 1
-V0 V0
-2
-V0 V0
+
 3 2
 V1 V2
 V2 V1
-2
+3
 V1 V2 V1
