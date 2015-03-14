@@ -62,6 +62,7 @@ void verifyHamiltonianPath() {
 
     for (unsigned int j = 0; j < P; j++) { 
         pathNode = pathNodesArray[j];
+        uniquePathNodes[pathNode] = true;
         if (j == 0) {
             if (nodes.find(pathNode) == nodes.end()) {
                 isHamiltonianPath = false;
@@ -75,8 +76,6 @@ void verifyHamiltonianPath() {
                 nodes.find(prevNode) == nodes.end() ||
                 nodes[prevNode][pathNode] == 0 || 
                 nodes[pathNode][prevNode] == 0) {
-                nodes[prevNode][pathNode] = false;
-                nodes[pathNode][prevNode] = false;
                 // cout << nodes[prevNode][pathNode] << ", " << nodes[pathNode][prevNode] << endl;
                 // cout << "Cannot find ^ edge!" << endl;
                 isHamiltonianPath = false;
@@ -85,11 +84,10 @@ void verifyHamiltonianPath() {
             nodes[prevNode][pathNode] -= 1;
             nodes[pathNode][prevNode] -= 1;
         }
-        uniquePathNodes[pathNode] = true;
         prevNode = pathNode;
     }
 
-    if (startNode != prevNode || 
+    if (pathNodesArray[0] != pathNodesArray[P-1] || 
         uniquePathNodes.size() != P-1 || 
         uniquePathNodes != graphNodes ||
         uniquePathNodes.size() != graphNodes.size() ||
@@ -105,15 +103,18 @@ void verifyHamiltonianPath() {
 
     map<string, bool>::reverse_iterator rit;
 
+    // Checking for set equality between graph nodes and path nodes
     for (rit = graphNodes.rbegin(); rit != graphNodes.rend(); ++rit) {
         if (!uniquePathNodes[rit->first]) {
             isHamiltonianPath = false;
+            break;
         }
     }
 
     for (rit = uniquePathNodes.rbegin(); rit != uniquePathNodes.rend(); ++rit) {
         if (!graphNodes[rit->first]) {
             isHamiltonianPath = false;
+            break;
         }
     }
 
