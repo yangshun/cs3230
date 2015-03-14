@@ -24,7 +24,7 @@ void printMap(map<string, map<string, bool> > nodes) {
 void verifyHamiltonianPath() {
     unsigned int N(0), M(0);
     cin >> N >> M;
-    cout << "N: " << N << ", M: " << M << endl;
+    // cout << "N: " << N << ", M: " << M << endl;
     map<string, map<string, bool> > nodes;
 
     for (unsigned int j = 0; j < M; j++) {
@@ -41,18 +41,22 @@ void verifyHamiltonianPath() {
             nodes[dstNode] = connectedNodes;
         } 
         nodes[dstNode][srcNode] = true;
-        cout << "Src: " << srcNode << ", Dst: " << dstNode << endl; 
+        // cout << "Src: " << srcNode << ", Dst: " << dstNode << endl; 
     }
 
     unsigned int P;
     bool isHamiltonianPath = true;
     cin >> P;
-    cout << "P: " << P << endl;
     string startNode, pathNode, prevNode;
     map<string, bool> pathNodes;
+    string * pathNodesArray = new string[P];
 
     for (unsigned int j = 0; j < P; j++) { 
-        cin >> pathNode;
+        cin >> pathNodesArray[j];
+    }
+
+    for (unsigned int j = 0; j < P; j++) { 
+        pathNode = pathNodesArray[j];
         if (j == 0) {
             if (nodes.find(pathNode) == nodes.end()) {
                 isHamiltonianPath = false;
@@ -65,7 +69,6 @@ void verifyHamiltonianPath() {
                 nodes.find(prevNode) == nodes.end() ||
                 !nodes[prevNode][pathNode] || 
                 !nodes[pathNode][prevNode]) {
-                // cout << prevNode << "," << pathNode << endl;
                 nodes[prevNode][pathNode] = false;
                 nodes[pathNode][prevNode] = false;
                 isHamiltonianPath = false;
@@ -86,6 +89,8 @@ void verifyHamiltonianPath() {
     }
 
     cout << (isHamiltonianPath ? "YES" : "NO") << endl;
+
+    delete [] pathNodesArray;
 }
 
 int main() {
@@ -93,7 +98,7 @@ int main() {
     cin >> T;
 
     for (int i = 0; i < T; i++) {
-        cout << endl << "Block " << i << endl;
+        // cout << endl << "Block " << i << endl;
         verifyHamiltonianPath();        
     }
 
