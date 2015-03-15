@@ -111,7 +111,6 @@ int main() {
     cin >> T;
 
     for (int i = 0; i < T; i++) {
-        // cout << endl << "Block " << i << endl;
         reduceGraph();        
     }
 

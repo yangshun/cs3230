@@ -46,7 +46,6 @@ void verifyHamiltonianPath() {
         } 
         nodes[dstNode][srcNode] += 1;
         graphNodes[dstNode] = true;
-        // cout << "Src: " << srcNode << ", Dst: " << dstNode << endl; 
     }
 
     unsigned int P;
@@ -71,13 +70,10 @@ void verifyHamiltonianPath() {
                 startNode = pathNode;
             }
         } else {
-            // cout << "Src:" << prevNode << ", Dst: " << pathNode << endl;
             if (nodes.find(pathNode) == nodes.end() ||
                 nodes.find(prevNode) == nodes.end() ||
                 nodes[prevNode][pathNode] == 0 || 
                 nodes[pathNode][prevNode] == 0) {
-                // cout << nodes[prevNode][pathNode] << ", " << nodes[pathNode][prevNode] << endl;
-                // cout << "Cannot find ^ edge!" << endl;
                 isHamiltonianPath = false;
                 break;
             }
@@ -128,7 +124,6 @@ int main() {
     cin >> T;
 
     for (int i = 0; i < T; i++) {
-        // cout << endl << "Block " << i << endl;
         verifyHamiltonianPath();        
     }
 
