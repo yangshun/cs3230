@@ -1,0 +1,431 @@
+<html>
+<!-- CS3230 - Programming Assignment 2 - C - Jan-2015 -->
+
+
+
+<head>
+<title>CS3230-PA2-C</title>
+</head>
+<body>
+<font color="blue" >
+Programming Assignment 2 - Part 2 (Task C)
+<br>
+CS3230 - Design and Analysis of Algorithms
+<br>
+Spring - 2015
+</font>
+<hr>
+<h1 align="center">3CNF Transformation</h1>
+<p>
+Recently Anka has done some homework on problem transformation. Now she is ready to show her Boss that the problem they are trying to do is really hard (thus, they should think of some heuristic algorithms instead of trying to find efficient polynomial time algorithm). The Boss not fully understands the NP-hardness (he says NP means Non-Polynomial -- as he failed CS3230 midterm bonus question). He knows only one NP-hard problem, that is the 3-CNF-SAT. Thus, to convince him, Anka has to give a polynomial time reduction from 3CNF-SAT to Dir_Ham_Cyc. She knows the proof; now she only needs to show a polynomial time transformation from an instance of 3CNF-SAT into an instance of Dir_Ham_Cyc to support her proof. Help her to do so in C++ or Java. She also asks you to strictly follow her set-up so that her Boss can verify.
+</p>
+<h2>Relevant problem and algorithm</h2>
+<i><h3>3-CNF-SATisfiablity:</h3></i>
+<b>Definitions:</b> 
+<pre>
++ Literal in a Boolean formula is a variable or its negation
++ Positive literal is a variable
++ Negative literal is a negation of a variable
++ CNF (Conjunctive Normal Form) is a Boolean formula expressed as AND of clauses, where each clause is the OR of one or more literals
++ 3CNF is a CNF in which each clause has exactly 3 distinct literals (a literal and its negation are distinct).
+</pre>
+
+<i><b>Example </b> of 3-CNF formula (the minus sign "-" represents negation)</i>:
+<pre>
+F1 = (X1 v X2 v X4) and (-X2 v X3 v -X5) and (-X3 v X4 v -X5) and ( -X3 v X5 v X6)
+F13 = (X11 v X25 v X47) and (-X25 v X39 v -X50) and (-X39 v X47 v -X50) and ( -X39 v X50 v X61)
+</pre>
+<p>Both formula are satisfiable. One of the (many) satisfied assignments for F1 is: X1 = true, X2 = false, X3 = false, X4 = true, X5 = false, X6 = false
+<p/>
+<pre>
+<i><b>3CNF-SAT problem:</b></i>
+<b>3CNF-SAT:</b> Given a 3CNF formula, decide whether it is satisfiable.
+</pre>
+
+<i><h3>Directed Hamiltonian Cycle problem (Dir_Ham_Cyc): </h3></i>
+<b>Dir_Ham_Cyc</b>: Consider a directed graph Gd = (V,E) of N vertices. Decide whether there exists a simple directed cycle C that contains every vertex exactly once.<br>
+<i><h3>Transformation Algorithm from 3CNF-SAT to Dir_Ham_Cyc</h3></i>
+<b>Vertex creation:</b>
+<pre>
+1. Create 2 vertices S and T (represent Source S and sink T)
+2. For each literal Xn, n = 1..N: Create 3K+3 (literal) vertices:
+	+ 2 boundary vertices in the left and the right Ln, Rn
+	+ A (first, 0-th) buffer vertex Bn.0
+	+ 3K internal vertices of form: Xn.k.L, Xn.k.R and Bn.k for each k = 1..K
+3. For each clause Ck: create a clausal vertex Ck to represent the clause.
+</pre>
+<b>Edge creation:</b>
+<pre>
+1. Create edges between N(3K+3) literal vertices
+	+For each literal index n = 1..N: 
+	Create horizontal edges: 2-way directed edges
+		Ln <-> Bn.0 <-> Xn.1.L <-> Xn.1.R <-> Bn.1 Xn.2.L <-> Xn.2.R <-> Bn.2 ... Xn.K.L <-> Xn.K.R <-> Bn.K  <-> Rn
+	+Create 4 vertical edges for n = 1..N-1:
+		Ln -> L(n+1), Ln -> R(n+1); Rn -> R(n+1), Rn -> L(n+1)
+	
+2. Create edges with S and T
+	+ Connect S to L1, R1: S->L1, S->R1
+	+ Connect LN, RN to T: LN->T, RN->T
+	+ Connect T to S: T->S
+	
+3. Create edges with the K clausal vertices
+	+ For each clausal vertex Ck with index k: (Ck is of form Ck = Xn v Xu v Xv) (total 6 directed edges)
+		+ For literal Xn: (2 directed edges)
+			if Xn is positive literal: Connect Xn.k.L -> Ck and connect Ck -> Xn.k.R
+			if Xn is negative literal: Connect Ck -> Xn.k.L and connect Xn.k.R -> Ck
+		+ For literal Xu and Xv: the same as above (4 directed edges)
+
+</pre>
+
+<h3>Setting of vertex name:</h3>
+- A name must be a string <br>
+- Source and sink vertices are always named "S" and "T" <br>
+- Boundary vertices: names always start with "L" or "R", and then the index name, which is the same as index of the literal. <br>
+- Buffer vertices: names always start with "B", then first index, which is the index of the literal, second index, which is either 0 or index of clause. Indices saparated by a dot "." <br>
+- Internal literal vertices: Names always start with "X", then first index, which is the index of the literal, second index, which is the index of clause, and last index, which is either "L" or "R". Indices are separated by a dot "." <br>
+- Clausal vertices: names always start with "C", index is the same as index of the clause. <br>
+
+<h3>Convention:</h3>
+L: left, R: right, B: buffer, X: literal/variable, C: clause, n: literal index, k: clause index <br>
+True/positive: direction from Left to Right; False/negative: direction from Right to Left <br>
+<br>
+<font color="blue" ><i>See slides in 3CNFSat_to_DirHamCyc.pdf file for more details! </i></font>
+
+<h2>Your Last Task (100 points)</h2>
+<p>Given a 3CNF-SAT instance, transform it into a Dir_Ham_Cyc instance, such that 3CNF-SAT instance is satisfiable if and only if the Dir_Ham_Cyc instance contains a directed Hamiltonian cycle. You must follow the transformation algorithm and its setting above.
+</p>
+
+<b>Input</b>
+<p>First line of input is the number T of testcases. Next are T blocks of lines, each block describes a testcase. <br>
+<i>In each block:</i> 
+First line is N, number of variables, and K, number of clauses. Variables are indexed from 1 to N, clauses -- from 1 to K.<br>
+Next K lines describe K clauses in order from 1 to K, one clause per line. A clause contains 3 literals, their indices are represented by 3 numbers m, n, p. A positive number represent index of variable (positive literal). A negative number represent an index of negate variable (negative literal).<br><br>
+
+<i>For example: </i>A clause 
+<pre> C = -X2 v X3 v -X5</pre> 
+will be presented as: 
+<pre>-2 3 -5</pre>
+
+<b>Output:</b>
+For each test-case, output a directed graph with following format: <br>
+First line: V (number of vertices) and E (number of edges) <br>
+Next E lines: each line output a directed edge of the graph. <br>
+You have to output the edge list in sorted lexicographic order. (Hint: use standard ordered set/map to store the edges, and then just print them in order in the set/map). <br><br>
+
+<b>Constraints</b>
+1&lt=T&lt=20 <br>
+3&lt=N&lt=80 <br>
+2&lt=N&lt=99 <br>
+All the clauses are distinct. Each clause contains no repeated variable. Variables in each clauses are listed in increasing order of indices. Each variable appears at least once. <br><br>
+<b>Sample input/output</b>
+<b>Input</b>
+<pre>
+2
+3 2
+1 -2 3
+-1 2 -3
+6 4
+1 2 4
+-2 3 -5
+-3 4 -5
+-3 5 6
+</pre>
+<b>Output</b>
+<pre>
+31 73
+B1.0 L1
+B1.0 X1.1.L
+B1.1 X1.1.R
+B1.1 X1.2.L
+B1.2 R1
+B1.2 X1.2.R
+B2.0 L2
+B2.0 X2.1.L
+B2.1 X2.1.R
+B2.1 X2.2.L
+B2.2 R2
+B2.2 X2.2.R
+B3.0 L3
+B3.0 X3.1.L
+B3.1 X3.1.R
+B3.1 X3.2.L
+B3.2 R3
+B3.2 X3.2.R
+C1 X1.1.R
+C1 X2.1.L
+C1 X3.1.R
+C2 X1.2.L
+C2 X2.2.R
+C2 X3.2.L
+L1 B1.0
+L1 L2
+L1 R2
+L2 B2.0
+L2 L3
+L2 R3
+L3 B3.0
+L3 T
+R1 B1.2
+R1 L2
+R1 R2
+R2 B2.2
+R2 L3
+R2 R3
+R3 B3.2
+R3 T
+S L1
+S R1
+T S
+X1.1.L B1.0
+X1.1.L C1
+X1.1.L X1.1.R
+X1.1.R B1.1
+X1.1.R X1.1.L
+X1.2.L B1.1
+X1.2.L X1.2.R
+X1.2.R B1.2
+X1.2.R C2
+X1.2.R X1.2.L
+X2.1.L B2.0
+X2.1.L X2.1.R
+X2.1.R B2.1
+X2.1.R C1
+X2.1.R X2.1.L
+X2.2.L B2.1
+X2.2.L C2
+X2.2.L X2.2.R
+X2.2.R B2.2
+X2.2.R X2.2.L
+X3.1.L B3.0
+X3.1.L C1
+X3.1.L X3.1.R
+X3.1.R B3.1
+X3.1.R X3.1.L
+X3.2.L B3.1
+X3.2.L X3.2.R
+X3.2.R B3.2
+X3.2.R C2
+X3.2.R X3.2.L
+96 217
+B1.0 L1
+B1.0 X1.1.L
+B1.1 X1.1.R
+B1.1 X1.2.L
+B1.2 X1.2.R
+B1.2 X1.3.L
+B1.3 X1.3.R
+B1.3 X1.4.L
+B1.4 R1
+B1.4 X1.4.R
+B2.0 L2
+B2.0 X2.1.L
+B2.1 X2.1.R
+B2.1 X2.2.L
+B2.2 X2.2.R
+B2.2 X2.3.L
+B2.3 X2.3.R
+B2.3 X2.4.L
+B2.4 R2
+B2.4 X2.4.R
+B3.0 L3
+B3.0 X3.1.L
+B3.1 X3.1.R
+B3.1 X3.2.L
+B3.2 X3.2.R
+B3.2 X3.3.L
+B3.3 X3.3.R
+B3.3 X3.4.L
+B3.4 R3
+B3.4 X3.4.R
+B4.0 L4
+B4.0 X4.1.L
+B4.1 X4.1.R
+B4.1 X4.2.L
+B4.2 X4.2.R
+B4.2 X4.3.L
+B4.3 X4.3.R
+B4.3 X4.4.L
+B4.4 R4
+B4.4 X4.4.R
+B5.0 L5
+B5.0 X5.1.L
+B5.1 X5.1.R
+B5.1 X5.2.L
+B5.2 X5.2.R
+B5.2 X5.3.L
+B5.3 X5.3.R
+B5.3 X5.4.L
+B5.4 R5
+B5.4 X5.4.R
+B6.0 L6
+B6.0 X6.1.L
+B6.1 X6.1.R
+B6.1 X6.2.L
+B6.2 X6.2.R
+B6.2 X6.3.L
+B6.3 X6.3.R
+B6.3 X6.4.L
+B6.4 R6
+B6.4 X6.4.R
+C1 X1.1.R
+C1 X2.1.R
+C1 X4.1.R
+C2 X2.2.L
+C2 X3.2.R
+C2 X5.2.L
+C3 X3.3.L
+C3 X4.3.R
+C3 X5.3.L
+C4 X3.4.L
+C4 X5.4.R
+C4 X6.4.R
+L1 B1.0
+L1 L2
+L1 R2
+L2 B2.0
+L2 L3
+L2 R3
+L3 B3.0
+L3 L4
+L3 R4
+L4 B4.0
+L4 L5
+L4 R5
+L5 B5.0
+L5 L6
+L5 R6
+L6 B6.0
+L6 T
+R1 B1.4
+R1 L2
+R1 R2
+R2 B2.4
+R2 L3
+R2 R3
+R3 B3.4
+R3 L4
+R3 R4
+R4 B4.4
+R4 L5
+R4 R5
+R5 B5.4
+R5 L6
+R5 R6
+R6 B6.4
+R6 T
+S L1
+S R1
+T S
+X1.1.L B1.0
+X1.1.L C1
+X1.1.L X1.1.R
+X1.1.R B1.1
+X1.1.R X1.1.L
+X1.2.L B1.1
+X1.2.L X1.2.R
+X1.2.R B1.2
+X1.2.R X1.2.L
+X1.3.L B1.2
+X1.3.L X1.3.R
+X1.3.R B1.3
+X1.3.R X1.3.L
+X1.4.L B1.3
+X1.4.L X1.4.R
+X1.4.R B1.4
+X1.4.R X1.4.L
+X2.1.L B2.0
+X2.1.L C1
+X2.1.L X2.1.R
+X2.1.R B2.1
+X2.1.R X2.1.L
+X2.2.L B2.1
+X2.2.L X2.2.R
+X2.2.R B2.2
+X2.2.R C2
+X2.2.R X2.2.L
+X2.3.L B2.2
+X2.3.L X2.3.R
+X2.3.R B2.3
+X2.3.R X2.3.L
+X2.4.L B2.3
+X2.4.L X2.4.R
+X2.4.R B2.4
+X2.4.R X2.4.L
+X3.1.L B3.0
+X3.1.L X3.1.R
+X3.1.R B3.1
+X3.1.R X3.1.L
+X3.2.L B3.1
+X3.2.L C2
+X3.2.L X3.2.R
+X3.2.R B3.2
+X3.2.R X3.2.L
+X3.3.L B3.2
+X3.3.L X3.3.R
+X3.3.R B3.3
+X3.3.R C3
+X3.3.R X3.3.L
+X3.4.L B3.3
+X3.4.L X3.4.R
+X3.4.R B3.4
+X3.4.R C4
+X3.4.R X3.4.L
+X4.1.L B4.0
+X4.1.L C1
+X4.1.L X4.1.R
+X4.1.R B4.1
+X4.1.R X4.1.L
+X4.2.L B4.1
+X4.2.L X4.2.R
+X4.2.R B4.2
+X4.2.R X4.2.L
+X4.3.L B4.2
+X4.3.L C3
+X4.3.L X4.3.R
+X4.3.R B4.3
+X4.3.R X4.3.L
+X4.4.L B4.3
+X4.4.L X4.4.R
+X4.4.R B4.4
+X4.4.R X4.4.L
+X5.1.L B5.0
+X5.1.L X5.1.R
+X5.1.R B5.1
+X5.1.R X5.1.L
+X5.2.L B5.1
+X5.2.L X5.2.R
+X5.2.R B5.2
+X5.2.R C2
+X5.2.R X5.2.L
+X5.3.L B5.2
+X5.3.L X5.3.R
+X5.3.R B5.3
+X5.3.R C3
+X5.3.R X5.3.L
+X5.4.L B5.3
+X5.4.L C4
+X5.4.L X5.4.R
+X5.4.R B5.4
+X5.4.R X5.4.L
+X6.1.L B6.0
+X6.1.L X6.1.R
+X6.1.R B6.1
+X6.1.R X6.1.L
+X6.2.L B6.1
+X6.2.L X6.2.R
+X6.2.R B6.2
+X6.2.R X6.2.L
+X6.3.L B6.2
+X6.3.L X6.3.R
+X6.3.R B6.3
+X6.3.R X6.3.L
+X6.4.L B6.3
+X6.4.L C4
+X6.4.L X6.4.R
+X6.4.R B6.4
+X6.4.R X6.4.L
+</pre>
+(End of problem's description)
+</body>
+
+</html>
