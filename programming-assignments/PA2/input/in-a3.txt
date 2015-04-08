@@ -1,0 +1,88 @@
+13
+5 4
+a b
+b c
+d e
+a c
+6
+a b c b c a
+5 4
+a b
+b c
+d e
+a c
+6
+a b c d e a
+3 3
+AA BB 
+BB AA
+CC AA
+4
+AA BB CC DD
+3 3
+AA BB 
+AA CC
+BB CC
+4
+AA BB CC AA
+3 4
+V1 V2
+V1 V3
+V2 V3
+V3 V1
+4 
+V1 V2 V3 V1
+3 4
+V1 V2
+V1 V3
+V2 V3
+V3 V1
+4 
+V1 V2 V1 V3
+3 4
+V1 V2
+V1 V3
+V2 V3
+V3 V1
+4 
+V1 V2 V3 V2
+3 4 
+V1 V2 
+V1 V3 
+V2 V3 
+V2 V1 
+4
+V3 V1 V2 V3
+3 2
+V1 V2 
+V1 V1 
+3
+V1 V2 V1
+3 4 
+AA bb 
+AA CC 
+bb CC 
+CC AA 
+3 
+AA bb CC
+3 4 
+V1 V2 
+V1 V3 
+V2 V3 
+V1 V1 
+4 
+V1 V2 V1 V1
+4 4 
+V1 V2 
+V1 V3 
+V2 V3 
+V4 V1 
+4 
+V1 V2 V3 V1
+4 4
+V1 V2
+V1 V3
+V2 V3
+V3 V1
+4 
+V2 V1 V3 V2
